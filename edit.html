@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Aposta - Bot-Gols</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        h1 { color: #4dabf7; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .nav { margin-bottom: 20px; }
+        .nav a { text-decoration: none; background-color: #6c757d; color: white; padding: 10px 15px; border-radius: 5px; font-weight: bold; }
+        .nav a:hover { background-color: #5a6268; }
+        form { background-color: #2a2a2a; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        form label { font-weight: bold; color: #aaa; margin-bottom: -10px; }
+        form input, form select { width: 100%; padding: 10px; background-color: #333; border: 1px solid #555; color: #e0e0e0; border-radius: 4px; box-sizing: border-box; }
+        form button { background-color: #4dabf7; color: #121212; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; grid-column: 1 / -1; }
+        form button:hover { background-color: #82c9ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav"><a href="/">Cancelar e Voltar</a></div>
+        <h1>Editar Aposta ID: {{ bet.ID }}</h1>
+
+        <form action="/update/{{ bet.ID }}" method="post">
+            <div>
+                <label for="campeonato">Campeonato</label>
+                <input type="text" id="campeonato" name="Campeonato" value="{{ bet.Campeonato }}" required>
+            </div>
+            <div>
+                <label for="dia_jogo">Dia do Jogo</label>
+                <input type="date" id="dia_jogo" name="Dia_Jogo" value="{{ bet.Dia_Jogo | replace(' ', 'T') }}" required>
+            </div>
+            <div>
+                <label for="time_casa">Time da Casa</label>
+                <input type="text" id="time_casa" name="Time_Casa" value="{{ bet.Time_Casa }}" required>
+            </div>
+            <div>
+                <label for="time_fora">Time de Fora</label>
+                <input type="text" id="time_fora" name="Time_Fora" value="{{ bet.Time_Fora }}" required>
+            </div>
+            <div>
+                <label for="mercado">Mercado</label>
+                <input type="text" id="mercado" name="Mercado" value="{{ bet.Mercado }}" required>
+            </div>
+            <div>
+                <label for="valor_aposta">Valor da Aposta</label>
+                <input type="number" step="0.01" id="valor_aposta" name="Valor_Aposta" value="{{ bet.Valor_Aposta }}" required>
+            </div>
+            <div>
+                <label for="gols_casa">Gols Casa</label>
+                <input type="number" id="gols_casa" name="Gols_Casa" value="{{ bet.Gols_Casa }}" required>
+            </div>
+            <div>
+                <label for="gols_fora">Gols Fora</label>
+                <input type="number" id="gols_fora" name="Gols_Fora" value="{{ bet.Gols_Fora }}" required>
+            </div>
+
+            <button type="submit">Salvar Alterações</button>
+        </form>
+    </div>
+</body>
+</html>
+@app.route('/delete/<bet_id>')
+def delete_bet(bet_id):
+    """Deleta uma aposta pelo seu ID."""
+    delete_bet_by_id(bet_id)
+    return redirect(url_for('index'))
+
+@app.route('/edit/<bet_id>')
+def edit_bet(bet_id):
+    """Mostra o formulário de edição para uma aposta específica."""
+    bet = get_bet_by_id(bet_id)
+    if bet:
+        return render_template('edit.html', bet=bet)
+    return redirect(url_for('index'))
+
+@app.route('/update/<bet_id>', methods=['POST'])
+def update_bet_route(bet_id):
+    """Recebe os dados do formulário de edição e atualiza a aposta."""
+    update_data = request.form.to_dict()
+    update_bet(bet_id, update_data)
+    return redirect(url_for('index'))
+
+@app.route('/dashboard')
+def dashboard():
+    """Mostra estatísticas e informações gerais sobre as apostas."""
+    return render_template('dashboard.html')
