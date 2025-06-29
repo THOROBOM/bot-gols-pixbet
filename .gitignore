@@ -1,0 +1,19 @@
+# Arquivos de ambiente com segredos
+.env
+
+# Arquivo de banco de dados
+apostas.csv
+
+# Arquivos gerados
+*.pdf
+
+# Pasta do ambiente virtual
+venv/
+*.venv
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+
+# Pasta de configuração do VSCode
+.vscode/
